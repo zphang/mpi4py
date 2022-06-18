@@ -1,9 +1,12 @@
+import sys
 from typing import (
     Any,
     Union,
-    List,
-    Tuple,
+    Optional,
     Sequence,
+    List,
+    Dict,
+    Tuple,
 )
 from numbers import (
     Integral,
@@ -13,10 +16,42 @@ from .MPI import (
     BottomType,
     InPlaceType,
 )
+if sys.version_info >= (3, 8):
+    from typing import Protocol
+else:
+    from typing_extensions import Protocol
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+if sys.version_info >= (3, 12):
+    from types import Buffer as _PyBuffer
+else:
+    _PyBuffer = Any
+del sys
 
 __all__: List[str] = ...
 
-Buffer = Any
+SupportsPyBuffer = _PyBuffer
+
+_Stream: TypeAlias = Union[int, Any]
+_PyCapsule: TypeAlias = object
+_DeviceType: TypeAlias = int
+_DeviceID: TypeAlias = int
+
+class SupportsDLPack(Protocol):
+    def __dlpack__(self, *, stream: Optional[_Stream] = None) -> _PyCapsule: ...
+    def __dlpack_device__(self) -> Tuple[_DeviceType, _DeviceID]: ...
+
+class SupportsCAI(Protocol):
+    @property
+    def __cuda_array_interface__(self) -> Dict[str, Any]: ...
+
+Buffer = Union[
+    SupportsPyBuffer,
+    SupportsDLPack,
+    SupportsCAI,
+]
 
 Bottom = Union[BottomType, None]
 
