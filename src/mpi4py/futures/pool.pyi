@@ -8,6 +8,10 @@ if sys.version_info >= (3, 10):
     from typing import ParamSpec
 else:
     from typing_extensions import ParamSpec
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 _T = TypeVar("_T")
 _P = ParamSpec("_P")
@@ -31,9 +35,9 @@ class MPIPoolExecutor(Executor):
         **kwargs: Any,
     ) -> None: ...
     def bootup(
-        self: _T,
+        self,
         wait: bool = True,
-    ) -> _T: ...
+    ) -> Self: ...
     if sys.version_info >= (3, 9):
         def submit(
             self,
@@ -85,7 +89,7 @@ class MPICommExecutor:
         root: int = 0,
         **kwargs: Any,
     ) -> None: ...
-    def __enter__(self) -> Optional[MPIPoolExecutor]: ...
+    def __enter__(self) -> Optional[Self]: ...
     def __exit__(self, *args: Any) -> Optional[bool]: ...
 
 class ThreadPoolExecutor(MPIPoolExecutor): ...
