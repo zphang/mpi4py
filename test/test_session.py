@@ -1,3 +1,4 @@
+import os
 from mpi4py import MPI
 import mpiunittest as unittest
 
@@ -20,6 +21,7 @@ class TestSession(unittest.TestCase):
         info.Free()
         session.Finalize()
 
+    @unittest.skipMPI('openmpi(>=5.0.0)', not os.getenv('OMPI_COMM_WORLD_SIZE'))  # open-mpi/ompi#10749
     def testSessionPsets(self):
         session = MPI.Session.Init()
         num_psets = session.Get_num_psets()
@@ -27,6 +29,7 @@ class TestSession(unittest.TestCase):
             name = session.Get_nth_pset(n)
         session.Finalize()
 
+    @unittest.skipMPI('openmpi(>=5.0.0)', not os.getenv('OMPI_COMM_WORLD_SIZE'))  # open-mpi/ompi#10749
     def testSessionPsetInfo(self):
         session = MPI.Session.Init()
         num_psets = session.Get_num_psets()
@@ -36,6 +39,7 @@ class TestSession(unittest.TestCase):
             info.Free()
         session.Finalize()
 
+    @unittest.skipMPI('openmpi(>=5.0.0)', not os.getenv('OMPI_COMM_WORLD_SIZE'))  # open-mpi/ompi#10749
     def testSessionPsetGroup(self):
         session = MPI.Session.Init()
         num_psets = session.Get_num_psets()

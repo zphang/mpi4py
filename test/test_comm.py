@@ -1,3 +1,4 @@
+import os
 from mpi4py import MPI
 import mpiunittest as unittest
 
@@ -167,6 +168,7 @@ class BaseTestComm(object):
             self.assertTrue(MPI.VERSION < 4)
             self.skipTest('mpi-comm-create_from_group')
 
+    @unittest.skipMPI('openmpi(>=5.0.0)')  # open-mpi/ompi#10702
     @unittest.skipMPI('openmpi(==2.0.0)')
     def testSplitTypeShared(self):
         try:
@@ -197,6 +199,7 @@ class BaseTestComm(object):
             else:
                 self.assertEqual(comm, MPI.COMM_NULL)
 
+    @unittest.skipMPI('openmpi(>=5.0.0)')  # open-mpi/ompi#10702
     def testSplitTypeHWGuided(self):
         try:
             MPI.COMM_SELF.Split_type(MPI.COMM_TYPE_SHARED).Free()
@@ -292,6 +295,9 @@ class TestCommWorld(BaseTestComm, unittest.TestCase):
         size = self.COMM.Get_size()
         rank = self.COMM.Get_rank()
         self.assertTrue(rank >= 0 and rank < size)
+    @unittest.skipMPI('openmpi(>=5.0.0)', not os.getenv('OMPI_COMM_WORLD_SIZE'))  # open-mpi/ompi#10736
+    def testCreateFromGroup(self):
+        super().testCreateFromGroup()
 
 class TestCommSelfDup(TestCommSelf):
     def setUp(self):

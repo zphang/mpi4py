@@ -272,6 +272,8 @@ class TestExcSession(BaseTestCase):
             -1,
         )
 
+    @unittest.skipMPI('openmpi(>=5.0.0)', not os.getenv('OMPI_COMM_WORLD_SIZE'))  # open-mpi/ompi#10749
+    @unittest.skipMPI('openmpi(>=5.0.0)', MPI.COMM_WORLD.size >= 3)  # open-mpi/ompi#10592
     @unittest.skipMPI('mpich(<4.1.0)')
     def testGetNthPsetPos(self):
         self.assertRaisesMPI(
